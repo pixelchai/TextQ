@@ -1,6 +1,7 @@
-from typing import Optional
+from typing import Optional, List
 import segmenters
 import readers
+import model
 
 class TextQuerier:
     def __init__(self, image, segmenter: segmenters.BaseSegmenter, reader: Optional[readers.BaseReader] = None):
@@ -9,7 +10,4 @@ class TextQuerier:
         self.__segmenter = segmenter
         self.__reader = reader
 
-class Segment:
-    def __init__(self, mask, text=None):
-        self.mask = mask
-        self.text = text
+        self.__segments: List[model.Segment] = []
