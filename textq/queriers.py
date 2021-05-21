@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from . import segmenters
 from . import readers
 from . import model
@@ -10,4 +10,8 @@ class TextQuerier:
         self.__segmenter = segmenter
         self.__reader = reader
 
-        self.__segments: List[model.Segment] = []
+        self.__segments: Optional[Tuple[model.Segment]] = None
+
+    def segment(self):
+        self.__segments = tuple(self.__segmenter.segment(self.image))
+        print(self.__segments)
