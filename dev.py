@@ -1,10 +1,10 @@
 import textq
 from PIL import Image
 
-# im = Image.open("/home/ab/mrtest/negexamples/001.jpg")
-# from textq.engines.paddleocr import PaddleOCREngine
-# q = textq.TextQuerier(im, PaddleOCREngine())
-# q.run()
+im = Image.open("/home/ab/mrtest/negexamples/002.jpg")
+from textq.engines.easyocr_engine import EasyOCREngine
+q = textq.TextQuerier(im, EasyOCREngine())
+q.run()
 
 # # https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_en/whl_en.md#21-use-by-code
 # # import time
@@ -24,7 +24,7 @@ from PIL import Image
 # #     draw.polygon([tuple(x) for x in line])
 # # im.show()
 
-import textq
-c = textq.correctors.DuckDuckGoCorrector()
-corrected = c.correct("hellohoware yo u today")
-print(corrected)
+# import textq
+# c = textq.correctors.DuckDuckGoCorrector()
+# corrected = c.correct("ranltithe greatest villain of all time")
+# print(corrected)
