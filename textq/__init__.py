@@ -1,4 +1,4 @@
 from .queriers import TextQuerier
-from model import Rect, Segment
-import segmenters
-import readers
+from . import model
+from .model import Region
+from . import engines

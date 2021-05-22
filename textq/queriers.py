@@ -1,13 +1,14 @@
-from typing import Optional, List
-import segmenters
-import readers
-import model
+from typing import Optional, List, Tuple
+from . import engines
+from . import model
 
 class TextQuerier:
-    def __init__(self, image, segmenter: segmenters.BaseSegmenter, reader: Optional[readers.BaseReader] = None):
+    def __init__(self, image, engine: engines.BaseEngine):
         self.image = image
 
-        self.__segmenter = segmenter
-        self.__reader = reader
+        self.__engine = engine
+        self.__regions: Optional[Tuple[model.Region]] = None
 
-        self.__segments: List[model.Segment] = []
+    def run(self):
+        self.__regions = tuple(self.__engine.run(self.image))
+        print(self.__regions)
