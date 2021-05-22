@@ -27,13 +27,15 @@ class DuckDuckGoCorrector(SearchEngineCorrector):
         def parse_did_you_mean():
             elm_did_you_mean = soup.find(id="did_you_mean")
             try:
-                return elm_did_you_mean.find("a").text
+                new_text =elm_did_you_mean.find("a").text
+                print(f"Corrected \"{text}\" -> \"{new_text}\". Using did_you_mean")
+                return new_text
             except:
                 return text
 
         text = parse_did_you_mean()
 
-        def fuzzy_result_analysis(max_l_dist=3, min_match_count=3):
+        def fuzzy_result_analysis(max_l_dist=3, min_match_count=5):
             web_results_text = ""
 
             for elm_result in soup.find_all(class_="web-result"):
@@ -43,18 +45,20 @@ class DuckDuckGoCorrector(SearchEngineCorrector):
                 except:
                     pass
 
-            # compute most frequently occurring near_match search result text
+            # compute the near matches in the web results text and their frequencies
             near_matches = defaultdict(int)  # str, frequency
             for near_match in fuzzysearch.find_near_matches(text, web_results_text, max_l_dist=max_l_dist):
                 near_matches[near_match.matched.strip()] += 1
 
-            # get most frequent near_match
-            near_match, freq = max(near_matches.items(), key=lambda x: x[1])
+            if len(near_matches) > 0:
+                # compute the most frequent near_match
+                near_match, freq = max(near_matches.items(), key=lambda x: x[1])
 
-            if freq > min_match_count:
-                return near_match
-            else:
-                return text
+                if freq >= min_match_count:
+                    print(f"Corrected \"{text}\" -> \"{near_match}\". Freq: {freq}")
+                    return near_match
+
+            return text
 
         if self.fuzzy and len(text) > 4:
             text = fuzzy_result_analysis()

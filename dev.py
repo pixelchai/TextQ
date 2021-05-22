@@ -1,10 +1,10 @@
 # import textq
 # from PIL import Image
 #
-# im = Image.open("res/test.jpg")
+# im = Image.open("/home/ab/mrtest/negexamples/001.jpg")
 # q = textq.TextQuerier(im, textq.engines.PaddleOCREngine())
 # q.run()
-#
+
 # # https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_en/whl_en.md#21-use-by-code
 # # import time
 # # from PIL import Image, ImageDraw
@@ -24,6 +24,6 @@
 # # im.show()
 
 import textq
-c = textq.correctors.DuckDuckGoCorrector()
-corrected = c.correct("how areyoutoday?")
+c = textq.correctors.WordNinjaCorrector()
+corrected = c.correct("helloiwouldlike to vgive you the highest pp i can give")
 print(corrected)
