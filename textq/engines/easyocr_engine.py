@@ -14,4 +14,5 @@ class EasyOCREngine(BaseEngine):
         result = self.__reader.readtext(im)
 
         for line in result:
-            yield model.Region(*line)
+            polygon = tuple(tuple(map(float, vertex)) for vertex in line[0])
+            yield model.Region(polygon, *line[1:])
