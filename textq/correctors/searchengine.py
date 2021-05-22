@@ -1,4 +1,6 @@
 from abc import ABC
+from collections import defaultdict
+
 from . import base
 from bs4 import BeautifulSoup
 import requests
@@ -24,9 +26,37 @@ class DuckDuckGoCorrector(SearchEngineCorrector):
 
         def parse_did_you_mean():
             elm_did_you_mean = soup.find(id="did_you_mean")
-            if elm_did_you_mean is not None:
+            try:
                 return elm_did_you_mean.find("a").text
-            return None
+            except:
+                return text
 
-        text = parse_did_you_mean() or text
+        text = parse_did_you_mean()
+
+        def fuzzy_result_analysis(max_l_dist=3, min_match_count=3):
+            web_results_text = ""
+
+            for elm_result in soup.find_all(class_="web-result"):
+                try:
+                    web_results_text += elm_result.find(class_="result__title").text.strip() + "\n"
+                    web_results_text += elm_result.find(class_="result__snippet").text.strip() + "\n"
+                except:
+                    pass
+
+            # compute most frequently occurring near_match search result text
+            near_matches = defaultdict(int)  # str, frequency
+            for near_match in fuzzysearch.find_near_matches(text, web_results_text, max_l_dist=max_l_dist):
+                near_matches[near_match.matched.strip()] += 1
+
+            # get most frequent near_match
+            near_match, freq = max(near_matches.items(), key=lambda x: x[1])
+
+            if freq > min_match_count:
+                return near_match
+            else:
+                return text
+
+        if self.fuzzy and len(text) > 4:
+            text = fuzzy_result_analysis()
+
         return text

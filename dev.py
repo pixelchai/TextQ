@@ -25,5 +25,5 @@
 
 import textq
 c = textq.correctors.DuckDuckGoCorrector()
-corrected = c.correct("Ohbreally")
+corrected = c.correct("how areyoutoday?")
 print(corrected)
