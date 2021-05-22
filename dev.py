@@ -2,11 +2,12 @@ import textq
 import time
 from PIL import Image, ImageDraw, ImageFont
 
-im_path = "/home/ab/mrtest/negexamples/006.jpg"
+im_path = "/home/ab/mrtest/negexamples/004.jpg"
 im = Image.open(im_path)
 
 from textq.engines.paddleocr_engine import PaddleOCREngine as Engine
-q = textq.TextQuerier(im, Engine())
+from textq.correctors.wordsplitting import WordNinjaCorrector as Corrector
+q = textq.TextQuerier(im, Engine(), Corrector())
 
 time_initial = time.time()
 q.run()
