@@ -2,8 +2,8 @@ import textq
 from PIL import Image
 
 im = Image.open("res/test.jpg")
-q = textq.TextQuerier(im, textq.segmenters.PaddleOCRSegmenter())
-q.segment()
+q = textq.TextQuerier(im, textq.engines.PaddleOCREngine())
+q.run()
 
 # https://github.com/PaddlePaddle/PaddleOCR/blob/release/2.1/doc/doc_en/whl_en.md#21-use-by-code
 # import time

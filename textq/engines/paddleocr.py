@@ -1,11 +1,11 @@
 from typing import Iterable
-from .base import BaseSegmenter
+from .base import BaseEngine
 from .. import model
 from paddleocr import PaddleOCR
 import cv2
 import numpy as np
 
-class PaddleOCRSegmenter(BaseSegmenter):
+class PaddleOCREngine(BaseEngine):
     def __init__(self, paddle_ocr=None, rec=True):
         if paddle_ocr is None:
             paddle_ocr = PaddleOCR(use_angle_cls=False, lang='en')
@@ -13,12 +13,12 @@ class PaddleOCRSegmenter(BaseSegmenter):
         self.__ocr = paddle_ocr
         self.rec = rec
 
-    def segment(self, im) -> Iterable[model.Segment]:
+    def run(self, im) -> Iterable[model.Region]:
         opencv_im = cv2.cvtColor(np.array(im), cv2.COLOR_RGB2BGR)
         result = self.__ocr.ocr(opencv_im, cls=False, rec=self.rec)
 
         for line in result:
             if self.rec:
-                yield model.Segment(line[0], *line[1])
+                yield model.Region(line[0], *line[1])
             else:
-                yield model.Segment(line[0])
+                yield model.Region(line[0])

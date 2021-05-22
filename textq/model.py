@@ -1,6 +1,6 @@
 from typing import Optional, Iterable, Tuple
 
-class Segment:
+class Region:
     def __init__(self, polygon: Iterable[Tuple], text: Optional[str] = None, confidence: Optional[float] = 1.0):
         self.polygon = polygon
         self.text = text

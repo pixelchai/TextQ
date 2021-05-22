@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import Iterable
 from .. import model
 
-class BaseSegmenter:
+class BaseEngine:
     @abstractmethod
-    def segment(self, im) -> Iterable[model.Segment]:
+    def run(self, im) -> Iterable[model.Region]:
         pass
