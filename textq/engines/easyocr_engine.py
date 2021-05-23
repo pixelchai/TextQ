@@ -1,4 +1,6 @@
 from typing import Iterable
+import cv2
+import numpy as np
 import easyocr
 from .. import model
 from .base import BaseEngine
@@ -11,7 +13,8 @@ class EasyOCREngine(BaseEngine):
         self.__reader = reader
 
     def run(self, im) -> Iterable[model.Region]:
-        result = self.__reader.readtext(im)
+        opencv_im = cv2.cvtColor(np.array(im), cv2.COLOR_RGB2BGR)
+        result = self.__reader.readtext(opencv_im)
 
         for line in result:
             polygon = tuple(tuple(map(float, vertex)) for vertex in line[0])
