@@ -19,7 +19,7 @@ class DuckDuckGoCorrector(SearchEngineCorrector):
         headers = {
             "User-Agent": USER_AGENT_STRING
         }
-        return BeautifulSoup(requests.get(url, params=params, headers=headers).content)
+        return BeautifulSoup(requests.get(url, params=params, headers=headers).content, 'lxml')
 
     def correct(self, text: str) -> str:
         soup = self._get_soup("https://html.duckduckgo.com/html/", {"q": text})
