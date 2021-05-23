@@ -61,12 +61,12 @@ class CanvasWidget(QWidget):
             self.height()
         )
 
-    def _screen_to_im(self, x, y):
+    def screen_to_im(self, x, y):
         if self._pixmap is None:
             raise ValueError
         return (x - self._off_x) / self._scale, (y - self._off_y) / self._scale
 
-    def _im_to_screen(self, x, y):
+    def im_to_screen(self, x, y):
         return x * self._scale + self._off_x, y * self._scale + self._off_y
 
     def get_rect(self):
@@ -78,8 +78,8 @@ class CanvasWidget(QWidget):
         )
 
     def get_im_rect(self) -> Tuple[int, int, int, int]:
-        x1, y1 = self._screen_to_im(self._rect_x1, self._rect_y1)
-        x2, y2 = self._screen_to_im(self._rect_x2, self._rect_y2)
+        x1, y1 = self.screen_to_im(self._rect_x1, self._rect_y1)
+        x2, y2 = self.screen_to_im(self._rect_x2, self._rect_y2)
 
         return (
             x1,
@@ -114,7 +114,7 @@ class CanvasWidget(QWidget):
             for region in self._regions:
                 points = []
                 for vertex in region.polygon:
-                    points.append(QtCore.QPointF(*self._im_to_screen(*vertex)))
+                    points.append(QtCore.QPointF(*self.im_to_screen(*vertex)))
                 painter.drawConvexPolygon(QtGui.QPolygonF(points))
 
         # render rect
