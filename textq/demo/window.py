@@ -6,8 +6,6 @@ from qtpy.QtWidgets import *
 import textq
 from PIL import Image
 from PIL.ImageQt import ImageQt
-from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
 from .canvas import CanvasWidget
 
 class DemoWindow(QMainWindow):
@@ -56,6 +54,7 @@ class DemoWindow(QMainWindow):
         self.btn_load.clicked.connect(self._btn_load_clicked)
 
         self.canvas.callback_mouse_move = self._canvas_mouse_moved
+        self.canvas.callback_mouse_release = self._canvas_mouse_released
 
     def _btn_load_clicked(self):
         im_path = os.path.normpath(self.edit_path.text())
@@ -70,13 +69,13 @@ class DemoWindow(QMainWindow):
         try:
             # show text on hover
             if not self.canvas.mouse_down:
-                self.status_bar.clearMessage()
-                cur_point = Point(*self.canvas.screen_to_im(self.canvas.cur_x, self.canvas.cur_y))
-
-                for region in self.querier.regions:
-                    polygon = Polygon(region.polygon)
-
-                    if polygon.contains(cur_point):
-                        self.status_bar.showMessage("Hover: {}".format(region.text))
+                result = self.querier.query_point(*self.canvas.screen_to_im(self.canvas.cur_x, self.canvas.cur_y))
+                if result is not None:
+                    self.status_bar.showMessage("Hover: {}".format(result), 3000)
         except:
             pass
+
+    def _canvas_mouse_released(self, event):
+        im_rect = self.canvas.get_im_rect()
+        result = self.querier.query_rect(*im_rect)
+        self.status_bar.showMessage("Selected: {}".format(result), 3000)
