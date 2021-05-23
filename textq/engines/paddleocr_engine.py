@@ -18,7 +18,8 @@ class PaddleOCREngine(BaseEngine):
         result = self.__ocr.ocr(opencv_im, cls=False, rec=self.rec)
 
         for line in result:
+            polygon = tuple(tuple(map(float, vertex)) for vertex in line[0])
             if self.rec:
-                yield model.Region(line[0], *line[1])
+                yield model.Region(polygon, str(line[1][0]), float(line[1][1]))
             else:
-                yield model.Region(line[0])
+                yield model.Region(polygon)

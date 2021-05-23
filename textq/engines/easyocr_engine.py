@@ -18,4 +18,4 @@ class EasyOCREngine(BaseEngine):
 
         for line in result:
             polygon = tuple(tuple(map(float, vertex)) for vertex in line[0])
-            yield model.Region(polygon, *line[1:])
+            yield model.Region(polygon, str(line[1]), float(line[2]))
