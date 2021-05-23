@@ -13,9 +13,6 @@ class CanvasWidget(QWidget):
         self._off_x = 0
         self._off_y = 0
         self._scale = 1
-        self.padding_max = 60
-        self.padding_alpha = 830
-        self.padding_beta = 350
 
         self._pixmap = None
 
@@ -25,6 +22,8 @@ class CanvasWidget(QWidget):
         self._rect_y1 = 0
         self._rect_x2 = 0
         self._rect_y2 = 0
+
+        self._regions = None
 
         self.callback_mouse_press = None
         self.callback_mouse_move = None
@@ -37,7 +36,7 @@ class CanvasWidget(QWidget):
         self._recalc_im()
 
     @staticmethod
-    def _calc_smart_centre(w, h, cw, ch, padding_max, alpha, beta):
+    def _calc_smart_centre(w, h, cw, ch):
         """
         :param w: image width
         :param h: image height
@@ -48,8 +47,7 @@ class CanvasWidget(QWidget):
         :param beta: if min(cw, ch) -> beta, pad -> 0
         :return: off_x, off_y, scale
         """
-        pad = padding_max * min(1, max(0, (min(cw, ch) - beta) / (alpha - beta)))
-        scale = max(0, min((cw - pad * 2) / w, (ch - pad * 2) / h))
+        scale = max(0, min(cw / w, ch / h))
         return cw / 2 - w * scale / 2, ch / 2 - h * scale / 2, scale
 
     def _recalc_im(self):
@@ -60,16 +58,16 @@ class CanvasWidget(QWidget):
             self._pixmap.width(),
             self._pixmap.height(),
             self.width(),
-            self.height(),
-            self.padding_max,
-            self.padding_alpha,
-            self.padding_beta
+            self.height()
         )
 
     def _screen_to_im(self, x, y):
         if self._pixmap is None:
             raise ValueError
         return (x - self._off_x) / self._scale, (y - self._off_y) / self._scale
+
+    def _im_to_screen(self, x, y):
+        return x * self._scale + self._off_x, y * self._scale + self._off_y
 
     def get_rect(self):
         return QtCore.QRect(
@@ -107,6 +105,18 @@ class CanvasWidget(QWidget):
                 self._pixmap
             )
 
+        # render regions
+        if self._regions is not None:
+            pen = QtGui.QPen(Qt.red)
+            pen.setWidth(2)
+            painter.setPen(pen)
+
+            for region in self._regions:
+                points = []
+                for vertex in region.polygon:
+                    points.append(QtCore.QPointF(*self._im_to_screen(*vertex)))
+                painter.drawConvexPolygon(QtGui.QPolygonF(points))
+
         # render rect
         if self.mouse_down:
             if self.draw_rect_border:
@@ -114,7 +124,6 @@ class CanvasWidget(QWidget):
                 pen = QtGui.QPen(Qt.blue)
                 pen.setWidth(3)
                 pen.setJoinStyle(Qt.MiterJoin)
-                # pen.setStyle(Qt.DotLine)
                 pen.setBrush(brush)
                 painter.setPen(pen)
                 painter.drawRect(self.get_rect())
@@ -182,4 +191,8 @@ class CanvasWidget(QWidget):
     def leaveEvent(self, event):
         self.setCursor(Qt.ArrowCursor)
         self._draw_cur = False
+        self.repaint()
+
+    def set_regions(self, regions):
+        self._regions = tuple(regions)
         self.repaint()
