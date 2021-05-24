@@ -93,14 +93,22 @@ class TextQuerier(Hashable):
         return None
 
     def query_rect(self, x1, y1, x2, y2):
-        rect = box(x1, y1, x2, y2)
+        return self.query_shape(box(x1, y1, x2, y2))
 
+    def query_shape(self, shape):
         text = ""
         for region in self.regions:
             polygon = Polygon(region.polygon)
 
-            if rect.intersects(polygon):
-                text += region.text + (" " if self.no_newlines else "\n")
+            if shape.intersects(polygon):
+                intersection = shape.intersection(polygon)
+                if intersection.area / polygon.area > 0.1:
+                    text += region.text + (" " if self.no_newlines else "\n")
 
         text = text[:-1]  # strip out final whitespace
         return self._postproc_text(text)
+
+    def close(self):
+        del self.engine
+        del self.image
+        del self.corrector
