@@ -14,7 +14,8 @@ class TextQuerier(Hashable):
                  corrector: BaseCorrector = None,
                  no_newlines=True,
                  cache_dir="cache"):
-        self.image = image
+        self.image = None
+        self.set_image(image)
 
         self.engine = engine
         self.corrector = corrector
@@ -62,6 +63,12 @@ class TextQuerier(Hashable):
 
     def run(self):
         self.regions = self._get_regions()
+
+    def set_image(self, image):
+        self.image = image
+
+        if self.image is not None:
+            self.run()
 
     def _try_correct(self, text) -> str:
         if self.corrector is not None:
