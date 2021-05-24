@@ -1,5 +1,4 @@
-import re
-from typing import Optional, List, Tuple
+from typing import Optional, Tuple
 from .engines import BaseEngine
 from .correctors import BaseCorrector
 from .model import Region, Hashable
